@@ -24,7 +24,7 @@ class IRLGuiWidget(QWidget):
         rospy.Subscriber("/im2", String, self.callback2)
         rospy.Subscriber("/im3", String, self.callback3)
         rospy.Subscriber("/im_info", String, self.callback4)
-
+        self.pub = rospy.Publisher("/dRt_CMD", String, queue_size = 1)
         self.main_layout = self.menu_layout()
         self.setLayout(self.main_layout)
 
@@ -32,7 +32,7 @@ class IRLGuiWidget(QWidget):
 # WIDGET 
 #############################################################################################################
     def button1_function(self):
-        pass
+        self.pub.publish("0")
 
     def button2_function(self):
         pass
@@ -58,22 +58,46 @@ class IRLGuiWidget(QWidget):
         button1.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         button2 = QPushButton("Get dRt")
         button2.clicked.connect(self.button2_function)
-        button2.setStyleSheet("background-color: rgba(16, 123, 227, 70%); selection-background-color: rgba(16, 123, 227, 60%); font-size: 32px")
+        button2.setStyleSheet("background-color: rgba(16, 123, 227, 90%); selection-background-color: rgba(16, 123, 227, 80%); font-size: 32px")
         button2.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+
         self._view = QLabel()
         self._view.setAlignment(Qt.AlignCenter)
         self._view.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self._view.setFixedSize(280, 280)
+        self._view.setFrameShape(2)
+        self._view.setFrameShadow(48)
+        self._view.setLineWidth(3)
+        self._view.setMidLineWidth(3)
+
         self._view2 = QLabel()
         self._view2.setAlignment(Qt.AlignCenter)
         self._view2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self._view2.setFixedSize(280, 280)
+        self._view2.setFrameShape(2)
+        self._view2.setFrameShadow(48)
+        self._view2.setLineWidth(3)
+        self._view2.setMidLineWidth(3)
+
         self._view3 = QLabel()
         self._view3.setAlignment(Qt.AlignCenter)
         self._view3.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self._view3.setFixedSize(280, 280)
+        self._view3.setFrameShape(2)
+        self._view3.setFrameShadow(48)
+        self._view3.setLineWidth(3)
+        self._view3.setMidLineWidth(3)
+
         self._view4 = QLabel()
         self._view4.setText("test")
         self._view4.setWordWrap(True)
         self._view4.setStyleSheet("font-size: 32px")
         self._view4.setAlignment(Qt.AlignCenter)
+        self._view4.setFixedSize(280, 280)
+        self._view4.setFrameShape(2)
+        self._view4.setFrameShadow(48)
+        self._view4.setLineWidth(3)
+        self._view4.setMidLineWidth(3)
         self._view4.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         button_layout.addWidget(button1)
@@ -96,6 +120,9 @@ class IRLGuiWidget(QWidget):
         s = data.data
         p = self.convert_img(s)
         self._view.setPixmap(p)
+        self._view2.setPixmap(p)
+        self._view3.setPixmap(p)
+        self._view4.setPixmap(p)
 
     def callback2(self, data):
         s = data.data
@@ -114,7 +141,7 @@ class IRLGuiWidget(QWidget):
     def convert_img(self, data):
         img = Image.open(BytesIO(base64.b64decode(data)))
         frame = np.asarray(img)
-        qimg = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_Grayscale8)
+        qimg = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_Indexed8)
         pixmap = QPixmap.fromImage(qimg)
         return pixmap
 
